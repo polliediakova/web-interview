@@ -1,7 +1,8 @@
 import React from 'react'
 import { AppBar, Toolbar, Typography } from '@mui/material'
 import { TodoLists } from './todos/components/TodoLists'
-
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { LocalizationProvider } from '@mui/x-date-pickers'
 const MainAppBar = () => {
   return (
     <AppBar position='static' color='primary'>
@@ -35,9 +36,11 @@ const MainWrapper = ({ children }) => {
 
 const App = () => {
   return (
-    <MainWrapper>
-      <TodoLists style={{ margin: '1rem' }} />
-    </MainWrapper>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <MainWrapper>
+        <TodoLists style={{ margin: '1rem' }} />
+      </MainWrapper>
+    </LocalizationProvider>
   )
 }
 

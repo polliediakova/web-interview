@@ -11,24 +11,21 @@ import {
 import ReceiptIcon from '@mui/icons-material/Receipt'
 import { TodoListForm } from './TodoListForm'
 
-// Simulate network
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+const serverUrl = 'http://localhost:3001/'
 
+const request = (url, params, body) => {
+  return fetch(`${serverUrl}${url}`, {
+    headers: { Accept: 'application/json', 'Content-type': 'application/json' },
+    body,
+    ...params,
+  }).then((response) => response.json())
+}
 const fetchTodoLists = () => {
-  return sleep(1000).then(() =>
-    Promise.resolve({
-      '0000000001': {
-        id: '0000000001',
-        title: 'First List',
-        todos: ['First todo of first list!'],
-      },
-      '0000000002': {
-        id: '0000000002',
-        title: 'Second List',
-        todos: ['First todo of second list!'],
-      },
-    })
-  )
+  return request('all')
+}
+
+const saveTodoLists = async (lists) => {
+  request('save', { method: 'POST' }, JSON.stringify(lists)).then((text) => console.log(text))
 }
 
 export const TodoLists = ({ style }) => {
@@ -40,6 +37,7 @@ export const TodoLists = ({ style }) => {
   }, [])
 
   if (!Object.keys(todoLists).length) return null
+
   return (
     <Fragment>
       <Card style={style}>
@@ -47,7 +45,7 @@ export const TodoLists = ({ style }) => {
           <Typography component='h2'>My Todo Lists</Typography>
           <List>
             {Object.keys(todoLists).map((key) => (
-              <ListItem key={key} button onClick={() => setActiveList(key)}>
+              <ListItem key={key} onClick={() => setActiveList(key)}>
                 <ListItemIcon>
                   <ReceiptIcon />
                 </ListItemIcon>
@@ -67,6 +65,7 @@ export const TodoLists = ({ style }) => {
               ...todoLists,
               [id]: { ...listToUpdate, todos },
             })
+            saveTodoLists({ [id]: { ...listToUpdate, todos } })
           }}
         />
       )}
